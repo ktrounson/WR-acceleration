@@ -23,6 +23,7 @@ All.joint.averages <- as.data.frame(t(LAverages))
 
 # Scale, create distance matrix & construct dendrogram with desired formatting
 
+library(dendextend)
 step1 <- as.data.frame(scale(All.joint.averages))
 distance_matrix <- dist(step1, method = 'euclidian')
 hierarchicalcluster <- hclust(distance_matrix, method = 'single')
