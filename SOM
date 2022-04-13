@@ -1,5 +1,6 @@
 # Import or transform joint angle data for each run into one matrix such that there are 30 columns (10 joints*3 planes) and 13,635 rows (5 participants*9 conditions*3 runs*101 frames)
 
+library(kohonen)
 y <- scale(Data[,])
 set.seed(600)
 h <- somgrid(xdim = 40, ydim = 40, neighbourhood.fct = "gaussian", topo = "hexagonal")
