@@ -1,0 +1,13 @@
+# Import or transform joint angle data for two conditions to be compared; 505 columns (101 frames*average across 3 runs from 5 participants) and 60 rows (10 joints*3 planes*2 conditions for comparison)
+
+# Baseline vs HPT
+
+step1 <- as.data.frame(scale(Joint.by.joint.baseline.vs.HPT))
+distance_matrix <- dist(step1, method = 'euclidean')
+dmatr <- as.matrix(distance_matrix)
+
+# Baseline vs HAT
+
+step1 <- as.data.frame(scale(Joint.by.joint.baseline.vs.HAT))
+distance_matrix <- dist(step1, method = 'euclidean')
+dmatr <- as.matrix(distance_matrix)
