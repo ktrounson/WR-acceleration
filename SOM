@@ -1,0 +1,7 @@
+# Import or transform joint angle data for each run into one matrix such that there are 30 columns (10 joints*3 planes) and 13,635 rows (5 participants*9 conditions*3 runs*101 frames)
+
+y <- scale(Data[,])
+set.seed(600)
+h <- somgrid(xdim = 40, ydim = 40, neighbourhood.fct = "gaussian", topo = "hexagonal")
+map <- som(y, grid = h, alpha = c(0.05, 0.01), maxNA.fraction = 0.1)
+plot(map, type = 'dist.neighbours', palette.name = gray.colors, ncolors = 5)
