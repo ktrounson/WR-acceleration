@@ -1,0 +1,60 @@
+# Import or transform joint angle data for each run into one continuous vector
+# Combine same conditions across runs 2-4 separately for each individual. Calculate the average at each frame
+
+P1.baseline.joint.averages <- cbind.data.frame(P1Baseline2, P1Baseline3, P1Baseline4)
+
+P1.baseline.joint.averages <- transform(P1.baseline.joint.averages, mean=apply(P1.baseline.joint.averages, 1, mean, na.rm = T))
+P1.baseline.joint.averages <- as.vector(P1.baseline.joint.averages$mean)
+
+# Repeat for all individual and all conditions (P1.baseline, P1.LPS, P1.LAS, P1.LPT, P1.LAT, P1.HPS, P1.HAS, P1.HPT, P1.HAT, P2.baseline, P2.LPS, P2.LAS, P2.LPT, P2.LAT, P2.HPS, P2.HAS, P2.HPT, P2.HAT, P3.baseline, P3.LPS, P3.LAS, P3.LPT, P3.LAT, P3.HPS, P3.HAS, P3.HPT, P3.HAT, P4.baseline, P4.LPS, P4.LAS, P4.LPT, P4.LAT, P4.HPS, P4.HAS, P4.HPT, P4.HAT, P5.baseline, P5.LPS, P5.LAS, P5.LPT, P5.LAT, P5.HPS, P5.HAS, P5.HPT, P5.HAT)
+
+# Combine averaged vectors for each individual*condition
+
+All.individual.joint.averages <- cbind.data.frame(P1.baseline.joint.averages, P1.LPS.joint.averages, P1.LAS.joint.averages, P1.LPT.joint.averages,
+                              P1.LAT.joint.averages, P1.HPS.joint.averages, P1.HAS.joint.averages, P1.HPT.joint.averages, P1.HAT.joint.averages,
+                              P2.baseline.joint.averages, P2.LPS.joint.averages, P2.LAS.joint.averages, P2.LPT.joint.averages,
+                              P2.LAT.joint.averages, P2.HPS.joint.averages, P2.HAS.joint.averages, P2.HPT.joint.averages, P2.HAT.joint.averages,
+                              P3.baseline.joint.averages, P3.LPS.joint.averages, P3.LAS.joint.averages, P3.LPT.joint.averages,
+                              P3.LAT.joint.averages, P3.HPS.joint.averages, P3.HAS.joint.averages, P3.HPT.joint.averages, P3.HAT.joint.averages,
+                              P4.baseline.joint.averages, P4.LPS.joint.averages, P4.LAS.joint.averages, P4.LPT.joint.averages,
+                              P4.LAT.joint.averages, P4.HPS.joint.averages, P4.HAS.joint.averages, P4.HPT.joint.averages, P4.HAT.joint.averages,
+                              P5.baseline.joint.averages, P5.LPS.joint.averages, P5.LAS.joint.averages, P5.LPT.joint.averages,
+                              P5.LAT.joint.averages, P5.HPS.joint.averages, P5.HAS.joint.averages, P5.HPT.joint.averages, P5.HAT.joint.averages,)
+                              
+# Transpose data
+
+All.individual.joint.averages <- as.data.frame(t(All.individual.joint.averages))
+
+# Apply label names, scale, create distance matrix & construct dendrogram with desired formatting
+
+rownames(All.individual.joint.averages) <- c("P1 Baseline", "P1 LPS", "P1 LAS", "P1 LPT",
+                                            "P1 LAT", "P1 HPS", "P1 HAS", "P1 HPT", "P1 HAT",
+                                            "P2 Baseline", "P2 LPS", "P2 LAS", "P2 LPT",
+                                            "P2 LAT", "P2 HPS", "P2 HAS", "P2 HPT", "P2 HAT",
+                                            "P3 Baseline", "P3 LPS", "P3 LAS", "P3 LPT",
+                                            "P3 LAT", "P3 HPS", "P3 HAS", "P3 HPT", "P3 HAT",
+                                            "P4 Baseline", "P4 LPS", "P4 LAS", "P4 LPT",
+                                            "P4 LAT", "P4 HPS", "P4 HAS", "P4 HPT", "P4 HAT",
+                                            "P5 Baseline", "P5 LPS", "P5 LAS", "P5 LPT",
+                                            "P5 LAT", "P5 HPS", "P5 HAS", "P5 HPT", "P5 HAT")
+
+library(dendextend)
+step1 <- as.data.frame(scale(All.individual.joint.averages))
+distance_matrix <- dist(step1, method = 'euclidean')
+hierarchicalcluster <- hclust(distance_matrix, method = 'single')
+dend <- as.dendrogram(hierarchicalcluster)
+labels_colors(dend) <- 1:6
+colors_to_use <- c(6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3,
+                   3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5,
+                   5, 5, 5, 5, 5, 5, 5)
+labels_colors(dend) <- colors_to_use
+size_to_use <- c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+                 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+                 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+                 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+labels_cex(dend) <- size_to_use
+dendvector <- as.vector(45:1)
+dend <- reorder(dend, dendvector)
+dend <- rev(dend)
+par(mar=c(5,2.5,1,0))
+plot(dend, ylab = "Height")
