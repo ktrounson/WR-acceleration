@@ -1,0 +1,35 @@
+# Import or transform joint angle data for each run into one continuous vector
+# Combine same conditions across runs 2-4 for each individual to create a matrix and calculate the average at each frame
+
+Baseline.joint.averages <- cbind.data.frame(P1Baseline2, P1Baseline3, P1Baseline4,
+                                P2Baseline2, P2Baseline3, P2Baseline4,
+                                P3Baseline2, P3Baseline3, P3Baseline4,
+                                P4Baseline2, P4Baseline3, P4Baseline4,
+                                P5Baseline2, P5Baseline3, P5Baseline4)
+
+Baseline.joint.averages <- transform(Baseline.joint.averages, mean=apply(Baseline.joint.averages, 1, mean, na.rm = T))
+Baseline.joint.averages <- as.vector(Baseline.joint.averages$mean)
+
+# Repeat for all conditions (LPS, LAS, LPT, LAT, HPS, HAS, HPT, HAT)
+
+# Combine averaged vectors for each condition
+
+All.joint.averages <- cbind.data.frame(Baseline.joint.averages, LPS.joint.averages, LAS.joint.averages, LPT.joint.averages,
+                              LAT.joint.averages, HPS.joint.averages, HAS.joint.averages, HPT.joint.averages, HAT.joint.averages)
+                              
+# Transpose data
+
+All.joint.averages <- as.data.frame(t(LAverages))
+
+# Scale, create distance matrix & construct dendrogram with desired formatting
+
+step1 <- as.data.frame(scale(All.joint.averages))
+distance_matrix <- dist(step1, method = 'euclidian')
+hierarchicalcluster <- hclust(distance_matrix, method = 'single')
+hierarchicalcluster <- as.dendrogram(hierarchicalcluster)
+par(mar=c(1,4,2,0))
+dendvector <- as.vector(9:1)
+dend <- reorder(hierarchicalcluster, dendvector)
+dend <- rev(dend)
+par(mar=c(5,2.5,1,0))
+groupleveldendrogram <- plot(dend, hang = -1, cex = 1, axes = T, ylab = "Height")
